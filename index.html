@@ -43,12 +43,26 @@
         <p class="text-lg text-green-900 source-sans">from Budi Family</p>
     </div>
     
-    <audio id="background-music" loop autoplay>
+    <audio id="background-music" loop>
         <source src="muslim-festival-123815.mp3" type="audio/mpeg">
         Browser Anda tidak mendukung elemen audio.
     </audio>
 
     <script>
+        // Autoplay audio setelah interaksi pengguna
+        document.addEventListener("DOMContentLoaded", function () {
+            const audio = document.getElementById("background-music");
+
+            function playAudio() {
+                if (audio.paused) {
+                    audio.play().catch(error => console.log("Autoplay diblokir:", error));
+                }
+            }
+
+            document.body.addEventListener("click", playAudio);
+            document.body.addEventListener("touchstart", playAudio);
+        });
+
         // Inisialisasi scene Three.js
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -57,15 +71,18 @@
         document.getElementById("scene-container").appendChild(renderer.domElement);
 
         // Tambahkan cahaya
-        const light = new THREE.PointLight(0xffffff, 1, 100);
-        light.position.set(10, 10, 10);
-        scene.add(light);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+
+        const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+        pointLight.position.set(10, 10, 10);
+        scene.add(pointLight);
 
         // Fungsi membuat lentera
         function createLantern(x, y, z) {
             const group = new THREE.Group();
             const bodyGeometry = new THREE.CylinderGeometry(0.7, 0.7, 2, 32);
-            const bodyMaterial = new THREE.MeshStandardMaterial({ color: 0xffd700, emissive: 0xffa500 });
+            const bodyMaterial = new THREE.MeshStandardMaterial({ color: 0xffd700, emissive: 0xffff00, emissiveIntensity: 0.5 });
             const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
             group.add(body);
 
@@ -94,22 +111,29 @@
         }
 
         const lanterns = [
-            createLantern(-11, 8, -10),
-            createLantern(-9, 9, -10),
-            createLantern(9, 10, -10),
-            createLantern(11, 8, -10)
+            createLantern(-5, 3, -10),
+            createLantern(5, 4, -10),
+            createLantern(-3, 5, -10),
+            createLantern(3, 6, -10)
         ];
 
-        camera.position.z = 5;
+        camera.position.set(0, 2, 10);
 
         function animate() {
             requestAnimationFrame(animate);
             lanterns.forEach((lantern, index) => {
-                lantern.position.y += Math.sin(Date.now() * 0.001 + index) * 0.005;
+                lantern.position.y += Math.sin(Date.now() * 0.002 + index) * 0.003;
             });
             renderer.render(scene, camera);
         }
         animate();
+
+        // Resize responsif
+        window.addEventListener("resize", () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
     </script>
 </body>
 </html>
