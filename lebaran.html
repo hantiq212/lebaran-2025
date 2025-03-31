@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+    <title>Idul Fitri Penuh Berkah</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body {
+            font-family: 'Berkshire Swash', cursive;
+        }
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        .photo-frame {
+            border: 10px solid #d4af37;
+            padding: 10px;
+            background: linear-gradient(145deg, #f7e1a1, #d4af37);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+        }
+        .source-sans {
+            font-family: 'Source Sans 3', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-green-700 via-green-500 to-green-300 flex items-center justify-center min-h-screen p-6">
+    <div id="scene-container"></div>
+    <div class="bg-green-100 shadow-lg rounded-lg max-w-lg w-full p-8 flex flex-col items-center relative border-4 border-yellow-500 text-center z-10">
+        <h1 class="text-4xl font-bold text-yellow-500 mb-4">Eid Mubarak 2025</h1>
+        <div class="photo-frame w-[300px] h-[400px] mb-6 overflow-hidden">
+            <img src="family.jpg" alt="Foto Lebaran" class="w-full h-full object-cover rounded-lg shadow-xl">
+        </div>
+        <p class="text-lg text-green-900 source-sans mb-2">Minal Aidzin Wal Faidzin</p>
+        <p class="text-2xl text-green-700 italic font-semibold mb-4">Mohon Maaf Lahir dan Batin</p>
+        <p class="text-lg text-green-900 source-sans">from Budi Family</p>
+    </div>
+    
+    <audio id="background-music" loop autoplay>
+        <source src="muslim-festival-123815.mp3" type="audio/mpeg">
+        Browser Anda tidak mendukung elemen audio.
+    </audio>
+
+    <script>
+        // Inisialisasi scene Three.js
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById("scene-container").appendChild(renderer.domElement);
+
+        // Tambahkan cahaya
+        const light = new THREE.PointLight(0xffffff, 1, 100);
+        light.position.set(10, 10, 10);
+        scene.add(light);
+
+        // Fungsi membuat lentera
+        function createLantern(x, y, z) {
+            const group = new THREE.Group();
+            const bodyGeometry = new THREE.CylinderGeometry(0.7, 0.7, 2, 32);
+            const bodyMaterial = new THREE.MeshStandardMaterial({ color: 0xffd700, emissive: 0xffa500 });
+            const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+            group.add(body);
+
+            const topGeometry = new THREE.ConeGeometry(0.8, 0.5, 32);
+            const topMaterial = new THREE.MeshStandardMaterial({ color: 0xffa500 });
+            const top = new THREE.Mesh(topGeometry, topMaterial);
+            top.position.y = 1.25;
+            group.add(top);
+
+            const bottomGeometry = new THREE.ConeGeometry(0.8, 0.5, 32);
+            const bottomMaterial = new THREE.MeshStandardMaterial({ color: 0xffa500 });
+            const bottom = new THREE.Mesh(bottomGeometry, bottomMaterial);
+            bottom.position.y = -1.25;
+            bottom.rotation.x = Math.PI;
+            group.add(bottom);
+
+            const hangerGeometry = new THREE.CylinderGeometry(0.1, 0.1, 0.5, 14);
+            const hangerMaterial = new THREE.MeshStandardMaterial({ color: 0x8b4513 });
+            const hanger = new THREE.Mesh(hangerGeometry, hangerMaterial);
+            hanger.position.y = 1.75;
+            group.add(hanger);
+
+            group.position.set(x, y, z);
+            scene.add(group);
+            return group;
+        }
+
+        const lanterns = [
+            createLantern(-11, 8, -10),
+            createLantern(-9, 9, -10),
+            createLantern(9, 10, -10),
+            createLantern(11, 8, -10)
+        ];
+
+        camera.position.z = 5;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            lanterns.forEach((lantern, index) => {
+                lantern.position.y += Math.sin(Date.now() * 0.001 + index) * 0.005;
+            });
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+</html>
